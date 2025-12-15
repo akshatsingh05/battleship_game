@@ -188,7 +188,14 @@ def play_game():
         # Check if player won
         if all_ships_sunk(computer_board):
             print("\n🎉 YOU WIN! All enemy ships sunk!")
-            break
+
+        print("\n🧍 Final Player Board:")
+        print_board(player_board, hide_ships=False)
+
+        print("\n💻 Final Computer Board:")
+        print_board(computer_board, hide_ships=False)
+
+        break
 
         # Computer turn
         print("\n🤖 Computer's turn...")
@@ -196,9 +203,15 @@ def play_game():
 
         # Check if computer won
         if all_ships_sunk(player_board):
-            print("\n💀 YOU LOST! All your ships are sunk.")
-            break
+            print("\n💀 You lost! All your ships have sunk!")
 
+        print("\n🧍 Final Player Board:")
+        print_board(player_board, hide_ships=False)
+
+        print("\n💻 Final Computer Board:")
+        print_board(computer_board, hide_ships=False)
+
+        break
 
 if __name__ == "__main__":
     play_game()
