@@ -161,15 +161,12 @@ def all_ships_sunk(board):
 def play_game():
     print("\n🚢 Welcome to Battleship!\n")
 
-    # Create boards
     player_board = create_board()
     computer_board = create_board()
 
-    # Place ships
     place_all_ships(player_board)
     place_all_ships(computer_board)
 
-    # Game loop
     while True:
         print("\n🧍 Your Board:")
         print_board(player_board, hide_ships=False)
@@ -180,38 +177,38 @@ def play_game():
         # Player turn
         print("\n🎯 Your turn!")
         player_continue = player_turn(computer_board)
+
         if not player_continue:
             print("\n🚪 You exited the game. Thanks for playing!")
             break
 
-
-        # Check if player won
+        # Player win check
         if all_ships_sunk(computer_board):
             print("\n🎉 YOU WIN! All enemy ships sunk!")
 
-        print("\n🧍 Final Player Board:")
-        print_board(player_board, hide_ships=False)
+            print("\n🧍 Final Player Board:")
+            print_board(player_board, hide_ships=False)
 
-        print("\n💻 Final Computer Board:")
-        print_board(computer_board, hide_ships=False)
-
-        break
+            print("\n💻 Final Computer Board:")
+            print_board(computer_board, hide_ships=False)
+            break
 
         # Computer turn
         print("\n🤖 Computer's turn...")
         computer_turn(player_board)
 
-        # Check if computer won
+        # Computer win check
         if all_ships_sunk(player_board):
-            print("\n💀 You lost! All your ships have sunk!")
+            print("\n💀 YOU LOST! All your ships have sunk!")
 
-        print("\n🧍 Final Player Board:")
-        print_board(player_board, hide_ships=False)
+            print("\n🧍 Final Player Board:")
+            print_board(player_board, hide_ships=False)
 
-        print("\n💻 Final Computer Board:")
-        print_board(computer_board, hide_ships=False)
+            print("\n💻 Final Computer Board:")
+            print_board(computer_board, hide_ships=False)
+            break
 
-        break
+
 
 if __name__ == "__main__":
     play_game()
