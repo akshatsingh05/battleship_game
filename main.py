@@ -1,0 +1,41 @@
+from board import create_board, print_board, all_ships_sunk
+from ships import place_all_ships, player_place_ships
+from attacks import player_turn, computer_turn
+
+def play_game():
+    print("\n🚢 Welcome to Battleship!\n")
+
+    player_board = create_board()
+    computer_board = create_board()
+
+    player_place_ships(player_board)
+    place_all_ships(computer_board)
+
+    while True:
+        print("\n🧍 Your Board:")
+        print_board(player_board, hide_ships=False)
+
+        print("\n💻 Computer Board:")
+        print_board(computer_board, hide_ships=True)
+
+        print("\n🎯 Your turn!")
+        if not player_turn(computer_board):
+            print("\n🚪 You exited the game.")
+            break
+
+        if all_ships_sunk(computer_board):
+            print("\n🎉 YOU WIN!")
+            print_board(computer_board, hide_ships=False)
+            break
+
+        print("\n🤖 Computer's turn...")
+        computer_turn(player_board)
+
+        if all_ships_sunk(player_board):
+            print("\n💀 YOU LOST!")
+            print_board(player_board, hide_ships=False)
+            break
+
+
+if __name__ == "__main__":
+    play_game()
