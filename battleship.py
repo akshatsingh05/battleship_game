@@ -201,7 +201,7 @@ def all_ships_sunk(board):
             return False
     return True
 
-def play_game():
+def play_game(): #defining
     print("\n🚢 Welcome to Battleship!\n")
 
     player_board = create_board()
