@@ -1,3 +1,4 @@
+from ai import generate_hunt_cells, ai_turn
 from board import create_board, print_board, all_ships_sunk
 from ships import place_all_ships, player_place_ships
 from attacks import player_turn, computer_turn
@@ -10,6 +11,13 @@ def play_game():
 
     player_place_ships(player_board)
     place_all_ships(computer_board)
+
+    ai_state = {
+    "mode": "hunt",
+    "hunt_cells": generate_hunt_cells(),
+    "targets": []
+    }
+
 
     while True:
         print("\n🧍 Your Board:")
@@ -29,7 +37,7 @@ def play_game():
             break
 
         print("\n🤖 Computer's turn...")
-        computer_turn(player_board)
+        ai_state = ai_turn(player_board, ai_state)
 
         if all_ships_sunk(player_board):
             print("\n💀 YOU LOST!")
