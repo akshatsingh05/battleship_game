@@ -1,4 +1,5 @@
 # ai.py
+DEBUG = True   # Set to False to disable debug prints
 import random
 from constants import BOARD_SIZE
 from attacks import is_valid_attack, attack
@@ -36,9 +37,13 @@ def ai_turn(player_board, ai_state):
     Performs one AI turn using Hunt + Target modes.
     Returns updated ai_state.
     """
+    if DEBUG:
+        print(f"[DEBUG] AI mode: {ai_state['mode']}")
 
     # -------- TARGET MODE --------
     if ai_state["mode"] == "target":
+        if DEBUG:
+            print(f"[DEBUG] Target queue: {ai_state['targets']}")
         while ai_state["targets"]:
             row, col = ai_state["targets"].pop(0)
 
@@ -61,10 +66,15 @@ def ai_turn(player_board, ai_state):
 
         # No more target cells → back to hunt
         ai_state["mode"] = "hunt"
+        if DEBUG:
+            print("[DEBUG] Target exhausted, returning to HUNT mode")
 
     # -------- HUNT MODE --------
     while ai_state["hunt_cells"]:
         row, col = ai_state["hunt_cells"].pop()
+        if DEBUG:
+            print(f"[DEBUG] Remaining hunt cells: {len(ai_state['hunt_cells'])}")
+
 
         if not is_valid_attack(player_board, row, col):
             continue
@@ -76,6 +86,10 @@ def ai_turn(player_board, ai_state):
             print("💥 Computer HIT your ship!")
             ai_state["mode"] = "target"
             ai_state["targets"] = get_adjacent_cells(row, col)
+
+            if DEBUG:
+                print("[DEBUG] Switching to TARGET mode")
+
         else:
             print("🌊 Computer MISSED!")
 
