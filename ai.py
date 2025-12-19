@@ -1,5 +1,5 @@
 # ai.py
-DEBUG = True   # Set to False to disable debug prints
+DEBUG = False   # Set to False to disable debug prints
 import random
 from constants import BOARD_SIZE
 from attacks import is_valid_attack, attack
