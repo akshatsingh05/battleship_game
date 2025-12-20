@@ -32,16 +32,29 @@ def play_game():
             break
 
         if all_ships_sunk(computer_board):
-            print("\n🎉 YOU WIN!")
+            print("\n🎉 YOU WIN! All enemy ships sunk!")
+
+            print("\n🧍 Final Player Board:")
+            print_board(player_board, hide_ships=False)
+
+            print("\n💻 Final Computer Board:")
             print_board(computer_board, hide_ships=False)
+
             break
+
 
         print("\n🤖 Computer's turn...")
         ai_state = ai_turn(player_board, ai_state)
 
         if all_ships_sunk(player_board):
-            print("\n💀 YOU LOST!")
+            print("\n💀 YOU LOST! All your ships have sunk.")
+
+            print("\n🧍 Final Player Board:")
             print_board(player_board, hide_ships=False)
+
+            print("\n💻 Final Computer Board:")
+            print_board(computer_board, hide_ships=False)
+
             break
 
 
