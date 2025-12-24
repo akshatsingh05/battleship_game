@@ -1,4 +1,3 @@
-# gui_boards.py
 import tkinter as tk
 from constants import BOARD_SIZE
 
@@ -9,7 +8,7 @@ def create_computer_board(parent, click_handler):
     grid.pack()
 
     for r in range(BOARD_SIZE):
-        row_buttons = []
+        row = []
         for c in range(BOARD_SIZE):
             btn = tk.Button(
                 grid,
@@ -21,8 +20,8 @@ def create_computer_board(parent, click_handler):
                 command=lambda r=r, c=c: click_handler(r, c)
             )
             btn.grid(row=r, column=c, padx=2, pady=2)
-            row_buttons.append(btn)
-        buttons.append(row_buttons)
+            row.append(btn)
+        buttons.append(row)
 
     return buttons
 
@@ -33,7 +32,7 @@ def create_player_board(parent):
     grid.pack()
 
     for r in range(BOARD_SIZE):
-        row_buttons = []
+        row = []
         for c in range(BOARD_SIZE):
             btn = tk.Button(
                 grid,
@@ -44,8 +43,8 @@ def create_player_board(parent):
                 state="disabled"
             )
             btn.grid(row=r, column=c, padx=2, pady=2)
-            row_buttons.append(btn)
-        buttons.append(row_buttons)
+            row.append(btn)
+        buttons.append(row)
 
     return buttons
 
