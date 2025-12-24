@@ -56,8 +56,11 @@ def update_player_board(player_board, player_buttons):
             btn = player_buttons[r][c]
 
             if cell == "X":
-                btn.config(bg="red")
+                btn.config(bg="red")          # Hit ship
             elif cell == "O":
-                btn.config(bg="green")
+                btn.config(bg="green")        # Miss
+            elif cell == "S":
+                btn.config(bg="gray")         # Player ship (VISIBLE)
             else:
-                btn.config(bg="blue")
+                btn.config(bg="blue")         # Water
+
