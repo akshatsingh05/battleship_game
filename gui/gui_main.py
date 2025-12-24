@@ -77,6 +77,15 @@ class BattleshipGUI:
         self.status = tk.Label(self.root, text="Your turn", font=("Arial", 12))
         self.status.pack(pady=10)
 
+        self.restart_btn = tk.Button(
+        self.root,
+        text="Restart Game",
+        font=("Arial", 11),
+        command=self.restart_game
+        )
+        self.restart_btn.pack(pady=5)
+
+
     # ---------------- GAME FLOW ----------------
 
     def on_computer_click(self, row, col):
@@ -129,3 +138,36 @@ class BattleshipGUI:
         for row in self.computer_buttons:
             for btn in row:
                 btn.config(state="disabled")
+                    
+    def restart_game(self):
+        # Reset boards
+        self.player_board = create_board()
+        self.computer_board = create_board()
+
+        place_all_ships(self.player_board)
+        place_all_ships(self.computer_board)
+
+        # Reset AI
+        self.ai_state = {
+            "mode": "hunt",
+            "hunt_cells": generate_hunt_cells(),
+            "targets": []
+        }
+
+        # Reset computer board buttons
+        for row in self.computer_buttons:
+            for btn in row:
+                btn.config(bg="blue", state="normal")
+
+        # Reset player board buttons
+        for row in self.player_buttons:
+            for btn in row:
+                btn.config(bg="blue")
+
+        # Reset labels
+        self.comp_result.config(text="Result: -")
+        self.player_result.config(text="Enemy Attack: -")
+        self.status.config(text="Your turn")
+
+        self.refresh_ui()
+
