@@ -40,7 +40,7 @@ def create_player_board(parent):
                 height=2,
                 font=("Arial", 14),
                 bg="blue",
-                state="disabled"
+                state="normal"
             )
             btn.grid(row=r, column=c, padx=2, pady=2)
             row.append(btn)

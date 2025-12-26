@@ -4,6 +4,7 @@ from board import create_board, all_ships_sunk
 from ships import place_all_ships
 from attacks import attack, is_valid_attack
 from ai import generate_hunt_cells, ai_turn
+from ships import can_place_ship
 
 from gui.gui_boards import (
     create_computer_board,
@@ -28,7 +29,6 @@ class BattleshipGUI:
         self.player_board = create_board()
         self.computer_board = create_board()
 
-        place_all_ships(self.player_board)
         place_all_ships(self.computer_board)
 
         # AI state (Hard mode)
@@ -86,6 +86,12 @@ class BattleshipGUI:
         self.player_result.pack(pady=5)
 
         self.player_buttons = create_player_board(player_frame)
+        for r in range(len(self.player_buttons)):
+            for c in range(len(self.player_buttons[r])):
+                self.player_buttons[r][c].config(
+                    command=lambda r=r, c=c: self.on_player_place_click(r, c)
+                )
+
 
         self.status = tk.Label(self.root, text="Your turn", font=("Arial", 12))
         self.status.pack(pady=10)
@@ -97,6 +103,15 @@ class BattleshipGUI:
         command=self.restart_game
         )
         self.restart_btn.pack(pady=5)
+
+        self.finish_btn = tk.Button(
+            self.root,
+            text="Finish Placement",
+            state="disabled",   # disabled until all ships placed
+            command=self.finish_placement
+        )
+        self.finish_btn.pack(pady=5)
+
 
 
     # ---------------- GAME FLOW ----------------
@@ -187,4 +202,57 @@ class BattleshipGUI:
     def toggle_orientation(self):
         self.current_orientation = "V" if self.current_orientation == "H" else "H"
         self.orientation_btn.config(text=f"Orientation: {self.current_orientation}")
+
+    def on_player_place_click(self, row, col):
+        if not self.placement_phase:
+            return
+
+        ship_size = self.ships_to_place[self.current_ship_index]
+
+        if not can_place_ship(
+            self.player_board,
+            row,
+            col,
+            ship_size,
+            self.current_orientation
+        ):
+            self.status.config(text="Invalid placement!")
+            return
+
+        # Place ship
+        if self.current_orientation == "H":
+            for i in range(ship_size):
+                self.player_board[row][col + i] = "S"
+        else:
+            for i in range(ship_size):
+                self.player_board[row + i][col] = "S"
+
+        self.current_ship_index += 1
+        self.refresh_ui()
+
+        if self.current_ship_index == len(self.ships_to_place):
+            # Ensure placement is still active
+            self.placement_phase = True
+            self.status.config(text="All ships placed. Click 'Finish Placement'.")
+            self.finish_btn.config(state="normal")
+        else:
+            self.status.config(
+                text=f"Place ship of size {self.ships_to_place[self.current_ship_index]}"
+            )
+
+
+    def finish_placement(self):
+        # End placement phase
+        self.placement_phase = False
+
+        # Update UI state
+        self.status.config(text="Placement complete. Your turn!")
+        self.orientation_btn.config(state="disabled")
+        self.finish_btn.config(state="disabled")
+
+        # Disable player board clicks
+        for row in self.player_buttons:
+            for btn in row:
+                btn.config(state="disabled")
+
 
