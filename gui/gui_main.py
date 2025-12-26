@@ -15,6 +15,12 @@ from gui.gui_status import update_counters
 
 class BattleshipGUI:
     def __init__(self):
+        self.ships_to_place = [3, 2]   # ship sizes
+        self.current_ship_index = 0
+        self.current_orientation = "H"
+        self.placement_phase = True
+
+
         self.root = tk.Tk()
         self.root.title("Battleship")
 
@@ -43,6 +49,13 @@ class BattleshipGUI:
     # ---------------- UI ----------------
 
     def build_ui(self):
+        self.orientation_btn = tk.Button(
+        self.root,
+        text="Orientation: H",
+        command=self.toggle_orientation
+        )
+        self.orientation_btn.pack(pady=5)
+
         container = tk.Frame(self.root)
         container.pack(padx=10, pady=10)
 
@@ -170,4 +183,8 @@ class BattleshipGUI:
         self.status.config(text="Your turn")
 
         self.refresh_ui()
+
+    def toggle_orientation(self):
+        self.current_orientation = "V" if self.current_orientation == "H" else "H"
+        self.orientation_btn.config(text=f"Orientation: {self.current_orientation}")
 
