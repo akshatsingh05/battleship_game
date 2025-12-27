@@ -171,9 +171,13 @@ class BattleshipGUI:
         # Reset boards
         self.player_board = create_board()
         self.computer_board = create_board()
-
-        place_all_ships(self.player_board)
+        
         place_all_ships(self.computer_board)
+
+        # Reset placement state
+        self.placement_phase = True
+        self.current_ship_index = 0
+        self.current_orientation = "H"
 
         # Reset AI
         self.ai_state = {
@@ -182,22 +186,26 @@ class BattleshipGUI:
             "targets": []
         }
 
-        # Reset computer board buttons
+        # Reset UI buttons
         for row in self.computer_buttons:
             for btn in row:
                 btn.config(bg="blue", state="normal")
 
-        # Reset player board buttons
         for row in self.player_buttons:
             for btn in row:
-                btn.config(bg="blue")
+                btn.config(bg="blue", state="normal")
 
         # Reset labels
         self.comp_result.config(text="Result: -")
         self.player_result.config(text="Enemy Attack: -")
-        self.status.config(text="Your turn")
+        self.status.config(text=f"Place ship of size {self.ships_to_place[0]}")
+
+        # Reset controls
+        self.orientation_btn.config(state="normal")
+        self.finish_btn.config(state="disabled")
 
         self.refresh_ui()
+
 
     def toggle_orientation(self):
         self.current_orientation = "V" if self.current_orientation == "H" else "H"
