@@ -46,9 +46,22 @@ class BattleshipGUI:
 
         self.root.mainloop()
 
+        self.difficulty = self.difficulty_var.get()
+
     # ---------------- UI ----------------
 
     def build_ui(self):
+                # Difficulty selector
+        tk.Label(self.root, text="Difficulty").pack()
+
+        self.difficulty_var = tk.StringVar(value="Hard")
+
+        self.difficulty_menu = tk.OptionMenu(
+            self.root,
+            self.difficulty_var,
+            "Easy", "Medium", "Hard"
+        )
+        self.difficulty_menu.pack(pady=5)
         self.orientation_btn = tk.Button(
         self.root,
         text="Orientation: H",
@@ -112,8 +125,6 @@ class BattleshipGUI:
         )
         self.finish_btn.pack(pady=5)
 
-
-
     # ---------------- GAME FLOW ----------------
 
     def on_computer_click(self, row, col):
@@ -141,7 +152,9 @@ class BattleshipGUI:
         self.root.after(300, self.ai_move)
 
     def ai_move(self):
-        self.ai_state = ai_turn(self.player_board, self.ai_state)
+        self.difficulty = self.difficulty_var.get()
+        self.ai_state = ai_turn(self.player_board, self.ai_state, self.difficulty)
+
         update_player_board(self.player_board, self.player_buttons)
         self.refresh_ui()
 
@@ -169,6 +182,7 @@ class BattleshipGUI:
                     
     def restart_game(self):
         # Reset boards
+        self.difficulty = self.difficulty_var.get()
         self.player_board = create_board()
         self.computer_board = create_board()
         

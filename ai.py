@@ -32,7 +32,19 @@ def get_adjacent_cells(row, col):
 
 # ---------- AI Turn ----------
 
-def ai_turn(player_board, ai_state):
+def ai_turn(player_board, ai_state, difficulty):
+    # EASY MODE — random attacks only
+    if difficulty == "Easy":
+        while True:
+            row = random.randint(0, BOARD_SIZE - 1)
+            col = random.randint(0, BOARD_SIZE - 1)
+
+            if is_valid_attack(player_board, row, col):
+                hit = attack(player_board, row, col)
+                print(f"\n🤖 Computer attacks ({row}, {col})")
+                print("💥 Computer HIT!" if hit else "🌊 Computer MISSED!")
+                return ai_state
+
     """
     Performs one AI turn using Hunt + Target modes.
     Returns updated ai_state.
@@ -41,7 +53,7 @@ def ai_turn(player_board, ai_state):
         print(f"[DEBUG] AI mode: {ai_state['mode']}")
 
     # -------- TARGET MODE --------
-    if ai_state["mode"] == "target":
+    if difficulty == "Hard" and ai_state["mode"] == "target":
         if DEBUG:
             print(f"[DEBUG] Target queue: {ai_state['targets']}")
         while ai_state["targets"]:
