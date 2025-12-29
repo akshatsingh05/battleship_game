@@ -176,9 +176,27 @@ class BattleshipGUI:
 
     def end_game(self, message):
         self.status.config(text=message)
-        for row in self.computer_buttons:
+
+        # Reveal ALL computer ships
+        for r in range(len(self.computer_board)):
+            for c in range(len(self.computer_board[r])):
+                cell = self.computer_board[r][c]
+                btn = self.computer_buttons[r][c]
+
+                if cell == "S":
+                    btn.config(bg="gray")     # unrevealed ship
+                elif cell == "X":
+                    btn.config(bg="red")      # hit
+                elif cell == "O":
+                    btn.config(bg="green")    # miss
+
+                btn.config(state="disabled")
+
+        # Disable player board as well
+        for row in self.player_buttons:
             for btn in row:
                 btn.config(state="disabled")
+
                     
     def restart_game(self):
         # Reset boards
