@@ -5,6 +5,7 @@ from ships import place_all_ships
 from attacks import attack, is_valid_attack
 from ai import generate_hunt_cells, ai_turn
 from ships import can_place_ship
+from ships import can_place_ship
 
 from gui.gui_boards import (
     create_computer_board,
@@ -15,7 +16,47 @@ from gui.gui_status import update_counters
 
 
 class BattleshipGUI:
+    def show_preview(self, row, col):
+        if not self.placement_phase:
+            return
+
+        self.clear_preview()
+
+        ship_size = self.ships_to_place[self.current_ship_index]
+
+        valid = can_place_ship(
+            self.player_board,
+            row,
+            col,
+            ship_size,
+            self.current_orientation
+        )
+
+        color = "lightgreen" if valid else "pink"
+
+        if self.current_orientation == "H":
+            cells = [(row, col + i) for i in range(ship_size)]
+        else:
+            cells = [(row + i, col) for i in range(ship_size)]
+
+        for r, c in cells:
+            if 0 <= r < len(self.player_buttons) and 0 <= c < len(self.player_buttons):
+                btn = self.player_buttons[r][c]
+                btn.config(bg=color)
+                self.preview_cells.append((r, c))
+
+    def clear_preview(self):
+        for r, c in self.preview_cells:
+            cell = self.player_board[r][c]
+            btn = self.player_buttons[r][c]
+            if cell == "S":
+                btn.config(bg="gray")
+            else:
+                btn.config(bg="blue")
+        self.preview_cells.clear()
+
     def __init__(self):
+        self.preview_cells = []
         self.ships_to_place = [3, 2]   # ship sizes
         self.current_ship_index = 0
         self.current_orientation = "H"
@@ -101,10 +142,13 @@ class BattleshipGUI:
         self.player_buttons = create_player_board(player_frame)
         for r in range(len(self.player_buttons)):
             for c in range(len(self.player_buttons[r])):
-                self.player_buttons[r][c].config(
+                btn = self.player_buttons[r][c]
+
+                btn.config(
                     command=lambda r=r, c=c: self.on_player_place_click(r, c)
                 )
-
+                btn.bind("<Enter>", lambda e, r=r, c=c: self.show_preview(r, c))
+                btn.bind("<Leave>", lambda e: self.clear_preview())
 
         self.status = tk.Label(self.root, text="Your turn", font=("Arial", 12))
         self.status.pack(pady=10)
@@ -244,6 +288,7 @@ class BattleshipGUI:
         self.orientation_btn.config(text=f"Orientation: {self.current_orientation}")
 
     def on_player_place_click(self, row, col):
+        self.clear_preview()
         if not self.placement_phase:
             return
 
