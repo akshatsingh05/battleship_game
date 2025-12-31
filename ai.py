@@ -1,109 +1,87 @@
-# ai.py
-DEBUG = False   # Set to False to disable debug prints
 import random
-from constants import BOARD_SIZE
 from attacks import is_valid_attack, attack
+from board import create_board, all_ships_sunk
 
-# ---------- Helpers ----------
+# ---------- HUNT GRID ----------
 
-def generate_hunt_cells():
+def generate_hunt_cells(board_size):
+    """
+    Generate checkerboard hunt cells for AI
+    """
     cells = []
-    for r in range(BOARD_SIZE):
-        for c in range(BOARD_SIZE):
+    for r in range(board_size):
+        for c in range(board_size):
             if (r + c) % 2 == 0:
                 cells.append((r, c))
     random.shuffle(cells)
     return cells
 
 
-def get_adjacent_cells(row, col):
+def get_adjacent_cells(row, col, board_size):
+    """
+    Get valid adjacent cells (up, down, left, right)
+    """
     candidates = [
         (row - 1, col),
         (row + 1, col),
         (row, col - 1),
         (row, col + 1),
     ]
-    valid = []
-    for r, c in candidates:
-        if 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE:
-            valid.append((r, c))
-    return valid
+
+    return [
+        (r, c)
+        for r, c in candidates
+        if 0 <= r < board_size and 0 <= c < board_size
+    ]
 
 
-# ---------- AI Turn ----------
+# ---------- AI TURN ----------
 
 def ai_turn(player_board, ai_state, difficulty):
-    # EASY MODE — random attacks only
+    board_size = len(player_board)
+
+    # ---------------- EASY ----------------
     if difficulty == "Easy":
         while True:
-            row = random.randint(0, BOARD_SIZE - 1)
-            col = random.randint(0, BOARD_SIZE - 1)
+            r = random.randint(0, board_size - 1)
+            c = random.randint(0, board_size - 1)
 
-            if is_valid_attack(player_board, row, col):
-                hit = attack(player_board, row, col)
-                print(f"\n🤖 Computer attacks ({row}, {col})")
-                print("💥 Computer HIT!" if hit else "🌊 Computer MISSED!")
+            if is_valid_attack(player_board, r, c):
+                attack(player_board, r, c)
                 return ai_state
 
-    """
-    Performs one AI turn using Hunt + Target modes.
-    Returns updated ai_state.
-    """
-    if DEBUG:
-        print(f"[DEBUG] AI mode: {ai_state['mode']}")
-
-    # -------- TARGET MODE --------
+    # ---------------- TARGET MODE (HARD ONLY) ----------------
     if difficulty == "Hard" and ai_state["mode"] == "target":
-        if DEBUG:
-            print(f"[DEBUG] Target queue: {ai_state['targets']}")
         while ai_state["targets"]:
-            row, col = ai_state["targets"].pop(0)
+            r, c = ai_state["targets"].pop(0)
 
-            if not is_valid_attack(player_board, row, col):
+            if not is_valid_attack(player_board, r, c):
                 continue
 
-            hit = attack(player_board, row, col)
-            print(f"\n🤖 Computer attacks ({row}, {col})")
+            hit = attack(player_board, r, c)
 
             if hit:
-                print("💥 Computer HIT your ship!")
-                # Add new adjacent cells
-                for cell in get_adjacent_cells(row, col):
+                for cell in get_adjacent_cells(r, c, board_size):
                     if cell not in ai_state["targets"]:
                         ai_state["targets"].append(cell)
-            else:
-                print("🌊 Computer MISSED!")
 
             return ai_state
 
-        # No more target cells → back to hunt
+        # Target exhausted → back to hunt
         ai_state["mode"] = "hunt"
-        if DEBUG:
-            print("[DEBUG] Target exhausted, returning to HUNT mode")
 
-    # -------- HUNT MODE --------
+    # ---------------- HUNT MODE (MEDIUM + HARD) ----------------
     while ai_state["hunt_cells"]:
-        row, col = ai_state["hunt_cells"].pop()
-        if DEBUG:
-            print(f"[DEBUG] Remaining hunt cells: {len(ai_state['hunt_cells'])}")
+        r, c = ai_state["hunt_cells"].pop()
 
-
-        if not is_valid_attack(player_board, row, col):
+        if not is_valid_attack(player_board, r, c):
             continue
 
-        hit = attack(player_board, row, col)
-        print(f"\n🤖 Computer attacks ({row}, {col})")
+        hit = attack(player_board, r, c)
 
-        if hit:
-            print("💥 Computer HIT your ship!")
+        if hit and difficulty == "Hard":
             ai_state["mode"] = "target"
-            ai_state["targets"] = get_adjacent_cells(row, col)
-
-            if DEBUG:
-                print("[DEBUG] Switching to TARGET mode")
-
-        else:
-            print("🌊 Computer MISSED!")
+            ai_state["targets"] = get_adjacent_cells(r, c, board_size)
 
         return ai_state
 

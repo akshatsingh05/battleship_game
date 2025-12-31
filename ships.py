@@ -1,6 +1,5 @@
 import random
 from constants import BOARD_SIZE
-from board import print_board
 
 def can_place_ship(board, row, col, ship_size, orientation):
     if orientation == "H":
@@ -45,7 +44,6 @@ def player_place_ships(board):
 
     for ship_size in ships:
         while True:
-            print_board(board, hide_ships=False)
             print(f"\nPlacing ship of size {ship_size}")
 
             try:
