@@ -291,29 +291,29 @@ class BattleshipGUI:
             self.comp_counter
         )
 
-    def end_game(self, message):
-        self.status.config(text=message)
+    # def end_game(self, message):
+    #     self.status.config(text=message)
 
-        for r in range(self.board_size):
-            for c in range(self.board_size):
-                cell = self.computer_board[r][c]
-                btn = self.computer_buttons[r][c]
+    #     for r in range(self.board_size):
+    #         for c in range(self.board_size):
+    #             cell = self.computer_board[r][c]
+    #             btn = self.computer_buttons[r][c]
 
-                if cell == "S":
-                    btn.config(bg="gray")
-                elif cell == "X":
-                    btn.config(bg="red")
-                elif cell == "O":
-                    btn.config(bg="green")
+    #             if cell == "S":
+    #                 btn.config(bg="gray")
+    #             elif cell == "X":
+    #                 btn.config(bg="red")
+    #             elif cell == "O":
+    #                 btn.config(bg="green")
 
-                btn.config(state="disabled")
+    #             btn.config(state="disabled")
 
-        for row in self.player_buttons:
-            for btn in row:
-                btn.config(state="disabled")
+    #     for row in self.player_buttons:
+    #         for btn in row:
+    #             btn.config(state="disabled")
 
-    def toggle_orientation(self):
-        self.current_orientation = "V" if self.current_orientation == "H" else "H"
-        self.orientation_btn.config(
-            text=f"Orientation: {self.current_orientation}"
-        )
+    # def toggle_orientation(self):
+    #     self.current_orientation = "V" if self.current_orientation == "H" else "H"
+    #     self.orientation_btn.config(
+    #         text=f"Orientation: {self.current_orientation}"
+    #     )
