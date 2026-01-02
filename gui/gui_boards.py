@@ -12,8 +12,8 @@ def create_computer_board(parent, click_handler, size):
         for c in range(size):
             btn = tk.Button(
                 board_frame,
-                width=3,
-                height=1,
+                width=4,
+                height=2,
                 bg="blue",
                 command=lambda r=r, c=c: click_handler(r, c)
             )
@@ -33,7 +33,7 @@ def create_player_board(parent, size):
     for r in range(size):
         row = []
         for c in range(size):
-            btn = tk.Button(board_frame, width=3, height=1, bg="blue")
+            btn = tk.Button(board_frame, width=4, height=2, bg="blue")
             btn.grid(row=r, column=c)
             row.append(btn)
         buttons.append(row)
