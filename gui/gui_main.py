@@ -192,13 +192,13 @@ class BattleshipGUI:
                 self.player_buttons[r][c].config(bg=color)
                 self.preview_cells.append((r, c))
 
-    def clear_preview(self):
-        for r, c in self.preview_cells:
-            cell = self.player_board[r][c]
-            self.player_buttons[r][c].config(
-                bg="gray" if cell == "S" else "blue"
-            )
-        self.preview_cells.clear()
+    # def clear_preview(self):
+    #     for r, c in self.preview_cells:
+    #         cell = self.player_board[r][c]
+    #         self.player_buttons[r][c].config(
+    #             bg="gray" if cell == "S" else "blue"
+    #         )
+    #     self.preview_cells.clear()
 
     # ================= GAME FLOW =================
 
