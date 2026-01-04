@@ -359,6 +359,47 @@ class BattleshipGUI:
             command=self.show_board_size_screen
         )
         start_btn.pack(pady=30)
+
     def show_board_size_screen(self):
-    # TEMP: go straight to game for now
+    # Clear window
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+        # Title
+        title = tk.Label(
+            self.root,
+            text="Select Board Size",
+            font=("Arial", 20, "bold")
+        )
+        title.pack(pady=30)
+
+        # Board size options
+        options_frame = tk.Frame(self.root)
+        options_frame.pack(pady=20)
+
+        for size in (5, 7, 10):
+            btn = tk.Radiobutton(
+                options_frame,
+                text=f"{size} × {size}",
+                variable=self.board_size_var,
+                value=size,
+                font=("Arial", 14),
+                indicatoron=0,
+                width=10,
+                pady=8
+            )
+            btn.pack(pady=6)
+
+        # Next button
+        next_btn = tk.Button(
+            self.root,
+            text="Next",
+            font=("Arial", 14),
+            width=12,
+            command=self.show_difficulty_screen
+        )
+        next_btn.pack(pady=30)
+
+    def show_difficulty_screen(self):
+    # TEMP: start game directly
         self.setup_game()
