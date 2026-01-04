@@ -399,7 +399,61 @@ class BattleshipGUI:
             command=self.show_difficulty_screen
         )
         next_btn.pack(pady=30)
+        back_btn = tk.Button(
+            self.root,
+            text="Back",
+            font=("Arial", 12),
+            width=10,
+            command=self.show_start_screen
+        )
+        back_btn.pack(pady=10)
 
     def show_difficulty_screen(self):
-    # TEMP: start game directly
-        self.setup_game()
+    # Clear window
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+        # Title
+        title = tk.Label(
+            self.root,
+            text="Select Difficulty",
+            font=("Arial", 20, "bold")
+        )
+        title.pack(pady=30)
+
+        # Difficulty options
+        options_frame = tk.Frame(self.root)
+        options_frame.pack(pady=20)
+
+        for level in ("Easy", "Medium", "Hard"):
+            btn = tk.Radiobutton(
+                options_frame,
+                text=level,
+                variable=self.difficulty_var,
+                value=level,
+                font=("Arial", 14),
+                indicatoron=0,
+                width=12,
+                pady=8
+            )
+            btn.pack(pady=6)
+
+        # Start game button
+        start_btn = tk.Button(
+            self.root,
+            text="Start Game",
+            font=("Arial", 14),
+            width=14,
+            command=self.setup_game
+        )
+        start_btn.pack(pady=25)
+
+        # Back button
+        back_btn = tk.Button(
+            self.root,
+            text="Back",
+            font=("Arial", 12),
+            width=10,
+            command=self.show_board_size_screen
+        )
+        back_btn.pack(pady=10)
