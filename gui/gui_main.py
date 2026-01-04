@@ -20,6 +20,7 @@ class BattleshipGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Battleship")
+        self.root.resizable(True, True)
 
         # Ship configurations
         self.ship_configs = {
@@ -55,7 +56,10 @@ class BattleshipGUI:
         self.computer_board = create_board(self.board_size)
 
         # Place computer ships only
-        place_all_ships(self.computer_board)
+        place_all_ships(
+            self.computer_board,
+            self.ship_configs[self.board_size]
+        )
 
         # Placement state
         self.ships_to_place = self.ship_configs[self.board_size]
@@ -124,6 +128,9 @@ class BattleshipGUI:
         self.computer_buttons = create_computer_board(
             comp_frame, self.on_computer_click, self.board_size
         )
+        for row in self.computer_buttons:
+            for btn in row:
+                btn.config(state="disabled")
 
         # ---- PLAYER BOARD ----
         player_frame = tk.Frame(container)
@@ -192,13 +199,13 @@ class BattleshipGUI:
                 self.player_buttons[r][c].config(bg=color)
                 self.preview_cells.append((r, c))
 
-    # def clear_preview(self):
-    #     for r, c in self.preview_cells:
-    #         cell = self.player_board[r][c]
-    #         self.player_buttons[r][c].config(
-    #             bg="gray" if cell == "S" else "blue"
-    #         )
-    #     self.preview_cells.clear()
+    def clear_preview(self):
+        for r, c in self.preview_cells:
+            cell = self.player_board[r][c]
+            self.player_buttons[r][c].config(
+                bg="gray" if cell == "S" else "blue"
+            )
+        self.preview_cells.clear()
 
     # ================= GAME FLOW =================
 
@@ -241,10 +248,15 @@ class BattleshipGUI:
         self.finish_btn.config(state="disabled")
         self.board_size_menu.config(state="disabled")
         self.status.config(text="Your turn!")
+        self.clear_preview()
 
         for row in self.player_buttons:
             for btn in row:
                 btn.config(state="disabled")
+        for row in self.computer_buttons:
+            for btn in row:
+                btn.config(state="normal")
+
 
     def on_computer_click(self, row, col):
         if self.placement_phase:

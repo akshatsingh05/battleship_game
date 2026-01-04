@@ -1,13 +1,9 @@
 import random
 from attacks import is_valid_attack, attack
-from board import create_board, all_ships_sunk
 
 # ---------- HUNT GRID ----------
 
 def generate_hunt_cells(board_size):
-    """
-    Generate checkerboard hunt cells for AI
-    """
     cells = []
     for r in range(board_size):
         for c in range(board_size):
@@ -18,9 +14,6 @@ def generate_hunt_cells(board_size):
 
 
 def get_adjacent_cells(row, col, board_size):
-    """
-    Get valid adjacent cells (up, down, left, right)
-    """
     candidates = [
         (row - 1, col),
         (row + 1, col),
@@ -42,13 +35,19 @@ def ai_turn(player_board, ai_state, difficulty):
 
     # ---------------- EASY ----------------
     if difficulty == "Easy":
-        while True:
-            r = random.randint(0, board_size - 1)
-            c = random.randint(0, board_size - 1)
+        available = [
+            (r, c)
+            for r in range(board_size)
+            for c in range(board_size)
+            if is_valid_attack(player_board, r, c)
+        ]
 
-            if is_valid_attack(player_board, r, c):
-                attack(player_board, r, c)
-                return ai_state
+        if not available:
+            return ai_state
+
+        r, c = random.choice(available)
+        attack(player_board, r, c)
+        return ai_state
 
     # ---------------- TARGET MODE (HARD ONLY) ----------------
     if difficulty == "Hard" and ai_state["mode"] == "target":
@@ -67,7 +66,6 @@ def ai_turn(player_board, ai_state, difficulty):
 
             return ai_state
 
-        # Target exhausted → back to hunt
         ai_state["mode"] = "hunt"
 
     # ---------------- HUNT MODE (MEDIUM + HARD) ----------------
@@ -85,4 +83,6 @@ def ai_turn(player_board, ai_state, difficulty):
 
         return ai_state
 
+    # Safety reset
+    ai_state["hunt_cells"] = generate_hunt_cells(board_size)
     return ai_state
