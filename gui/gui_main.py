@@ -37,8 +37,8 @@ class BattleshipGUI:
         self.preview_cells = []
         self.board_size = 5
 
-        # Start game
-        self.setup_game()
+        #  Show start screen instead of starting game immediately
+        self.show_start_screen()
         self.root.mainloop()
 
     # ================= GAME SETUP / RESTART =================
@@ -329,3 +329,36 @@ class BattleshipGUI:
         self.orientation_btn.config(
             text=f"Orientation: {self.current_orientation}"
         )
+    def show_start_screen(self):
+        # Clear window
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+        # Title
+        title = tk.Label(
+            self.root,
+            text="🚢 Battleship",
+            font=("Arial", 26, "bold")
+        )
+        title.pack(pady=40)
+
+        # Subtitle
+        subtitle = tk.Label(
+            self.root,
+            text="A Strategy Game",
+            font=("Arial", 14)
+        )
+        subtitle.pack(pady=10)
+
+        # Start button
+        start_btn = tk.Button(
+            self.root,
+            text="Start Game",
+            font=("Arial", 16),
+            width=15,
+            command=self.show_board_size_screen
+        )
+        start_btn.pack(pady=30)
+    def show_board_size_screen(self):
+    # TEMP: go straight to game for now
+        self.setup_game()
