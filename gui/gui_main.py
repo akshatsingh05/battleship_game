@@ -89,6 +89,16 @@ class BattleshipGUI:
     # ================= UI =================
 
     def build_ui(self):
+        # Back to Start button (top-right)
+        back_to_start_btn = tk.Button(
+            self.root,
+            text="← Back to Start",
+            font=("Arial", 10),
+            width=12,
+            command=self.back_to_start
+        )
+        back_to_start_btn.place(relx=0.98, rely=0.03, anchor="ne")
+
         # Board size selector
         tk.Label(self.root, text="Board Size").pack()
         self.board_size_menu = tk.OptionMenu(
@@ -471,3 +481,15 @@ class BattleshipGUI:
             command=self.show_board_size_screen
         )
         back_btn.place(relx=0.98, rely=0.05, anchor="ne")
+    def back_to_start(self):
+        # Optional: confirmation (recommended UX)
+        # If you don’t want a prompt, remove the next 4 lines.
+        from tkinter import messagebox
+        if not messagebox.askyesno(
+            "Exit Game",
+            "Return to start screen? Current game will be lost."
+        ):
+            return
+
+        # Go back to start screen (full reset)
+        self.show_start_screen()
