@@ -406,7 +406,14 @@ class BattleshipGUI:
             width=10,
             command=self.show_start_screen
         )
-        back_btn.pack(pady=10)
+        back_btn = tk.Button(
+            self.root,
+            text="← Back",
+            font=("Arial", 10),
+            width=7,
+            command=self.show_start_screen
+        )
+        back_btn.place(relx=0.98, rely=0.05, anchor="ne")
 
     def show_difficulty_screen(self):
     # Clear window
@@ -456,4 +463,11 @@ class BattleshipGUI:
             width=10,
             command=self.show_board_size_screen
         )
-        back_btn.pack(pady=10)
+        back_btn = tk.Button(
+            self.root,
+            text="← Back",
+            font=("Arial", 10),
+            width=7,
+            command=self.show_board_size_screen
+        )
+        back_btn.place(relx=0.98, rely=0.05, anchor="ne")
