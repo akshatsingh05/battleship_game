@@ -20,6 +20,7 @@ class BattleshipGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Battleship")
+        self.root.state("zoomed")
         self.root.resizable(True, True)
 
         # Ship configurations
