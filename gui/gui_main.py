@@ -341,147 +341,121 @@ class BattleshipGUI:
             text=f"Orientation: {self.current_orientation}"
         )
     def show_start_screen(self):
-        # Clear window
         for widget in self.root.winfo_children():
             widget.destroy()
 
-        # Title
-        title = tk.Label(
-            self.root,
-            text="🚢 Battleship",
-            font=("Arial", 26, "bold")
-        )
-        title.pack(pady=40)
+        center = tk.Frame(self.root)
+        center.place(relx=0.5, rely=0.5, anchor="center")
 
-        # Subtitle
+        title = tk.Label(
+            center,
+            text="🚢 Battleship",
+            font=("Arial", 30, "bold")
+        )
+        title.pack(pady=20)
+
         subtitle = tk.Label(
-            self.root,
+            center,
             text="A Strategy Game",
             font=("Arial", 14)
         )
         subtitle.pack(pady=10)
 
-        # Start button
         start_btn = tk.Button(
-            self.root,
+            center,
             text="Start Game",
             font=("Arial", 16),
-            width=15,
+            width=16,
             command=self.show_board_size_screen
         )
         start_btn.pack(pady=30)
 
     def show_board_size_screen(self):
-    # Clear window
         for widget in self.root.winfo_children():
             widget.destroy()
 
-        # Title
-        title = tk.Label(
+        # Back button (top-right)
+        back_btn = tk.Button(
             self.root,
-            text="Select Board Size",
-            font=("Arial", 20, "bold")
+            text="← Back",
+            font=("Arial", 10),
+            width=7,
+            command=self.show_start_screen
         )
-        title.pack(pady=30)
+        back_btn.place(relx=0.98, rely=0.05, anchor="ne")
 
-        # Board size options
-        options_frame = tk.Frame(self.root)
-        options_frame.pack(pady=20)
+        center = tk.Frame(self.root)
+        center.place(relx=0.5, rely=0.5, anchor="center")
+
+        title = tk.Label(
+            center,
+            text="Select Board Size",
+            font=("Arial", 22, "bold")
+        )
+        title.pack(pady=20)
 
         for size in (5, 7, 10):
-            btn = tk.Radiobutton(
-                options_frame,
+            tk.Radiobutton(
+                center,
                 text=f"{size} × {size}",
                 variable=self.board_size_var,
                 value=size,
                 font=("Arial", 14),
                 indicatoron=0,
-                width=10,
-                pady=8
-            )
-            btn.pack(pady=6)
+                width=14,
+                pady=10
+            ).pack(pady=6)
 
-        # Next button
-        next_btn = tk.Button(
-            self.root,
+        tk.Button(
+            center,
             text="Next",
             font=("Arial", 14),
-            width=12,
+            width=14,
             command=self.show_difficulty_screen
-        )
-        next_btn.pack(pady=30)
-        back_btn = tk.Button(
-            self.root,
-            text="Back",
-            font=("Arial", 12),
-            width=10,
-            command=self.show_start_screen
-        )
+        ).pack(pady=25)
+    def show_difficulty_screen(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
         back_btn = tk.Button(
             self.root,
             text="← Back",
             font=("Arial", 10),
             width=7,
-            command=self.show_start_screen
+            command=self.show_board_size_screen
         )
         back_btn.place(relx=0.98, rely=0.05, anchor="ne")
 
-    def show_difficulty_screen(self):
-    # Clear window
-        for widget in self.root.winfo_children():
-            widget.destroy()
+        center = tk.Frame(self.root)
+        center.place(relx=0.5, rely=0.5, anchor="center")
 
-        # Title
         title = tk.Label(
-            self.root,
+            center,
             text="Select Difficulty",
-            font=("Arial", 20, "bold")
+            font=("Arial", 22, "bold")
         )
-        title.pack(pady=30)
-
-        # Difficulty options
-        options_frame = tk.Frame(self.root)
-        options_frame.pack(pady=20)
+        title.pack(pady=20)
 
         for level in ("Easy", "Medium", "Hard"):
-            btn = tk.Radiobutton(
-                options_frame,
+            tk.Radiobutton(
+                center,
                 text=level,
                 variable=self.difficulty_var,
                 value=level,
                 font=("Arial", 14),
                 indicatoron=0,
-                width=12,
-                pady=8
-            )
-            btn.pack(pady=6)
+                width=14,
+                pady=10
+            ).pack(pady=6)
 
-        # Start game button
-        start_btn = tk.Button(
-            self.root,
+        tk.Button(
+            center,
             text="Start Game",
             font=("Arial", 14),
-            width=14,
+            width=16,
             command=self.setup_game
-        )
-        start_btn.pack(pady=25)
+        ).pack(pady=25)
 
-        # Back button
-        back_btn = tk.Button(
-            self.root,
-            text="Back",
-            font=("Arial", 12),
-            width=10,
-            command=self.show_board_size_screen
-        )
-        back_btn = tk.Button(
-            self.root,
-            text="← Back",
-            font=("Arial", 10),
-            width=7,
-            command=self.show_board_size_screen
-        )
-        back_btn.place(relx=0.98, rely=0.05, anchor="ne")
     def back_to_start(self):
         # Optional: confirmation (recommended UX)
         # If you don’t want a prompt, remove the next 4 lines.
