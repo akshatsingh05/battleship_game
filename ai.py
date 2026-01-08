@@ -46,8 +46,8 @@ def ai_turn(player_board, ai_state, difficulty):
             return ai_state
 
         r, c = random.choice(available)
-        attack(player_board, r, c)
-        return ai_state
+        hit = attack(player_board, r, c)
+        return ai_state, (r, c), hit
 
     # ---------------- TARGET MODE (HARD ONLY) ----------------
     if difficulty == "Hard" and ai_state["mode"] == "target":

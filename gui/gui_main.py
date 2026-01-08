@@ -11,7 +11,7 @@ from gui.gui_boards import (
     update_player_board
 )
 from gui.gui_status import update_counters
-
+from gui.animations import hit_animation, miss_animation
 
 class BattleshipGUI:
 
@@ -40,6 +40,7 @@ class BattleshipGUI:
 
         #  Show start screen instead of starting game immediately
         self.show_start_screen()
+        self.animating = False
         self.root.mainloop()
 
     # ================= GAME SETUP / RESTART =================
@@ -268,40 +269,66 @@ class BattleshipGUI:
             for btn in row:
                 btn.config(state="normal")
 
-
     def on_computer_click(self, row, col):
-        if self.placement_phase:
+        if self.animating or self.placement_phase:
             return
 
         if not is_valid_attack(self.computer_board, row, col):
             return
 
+        self.animating = True  # 🔒 lock input
+
         hit = attack(self.computer_board, row, col)
-        self.computer_buttons[row][col].config(
-            bg="red" if hit else "green", state="disabled"
-        )
+        btn = self.computer_buttons[row][col]
 
-        self.comp_result.config(text="Hit!" if hit else "Miss!")
-        self.refresh_ui()
+        def after_player_animation():
+            self.refresh_ui()
 
-        if all_ships_sunk(self.computer_board):
-            self.end_game("🎉 You win!")
-            return
+            if all_ships_sunk(self.computer_board):
+                self.end_game("🎉 You win!")
+                return
 
-        self.status.config(text="Computer's turn...")
-        self.root.after(400, self.ai_move)
+            self.status.config(text="Computer is thinking…")
+            self.root.after(200, self.ai_move)  # hand over to AI
 
+        if hit:
+            hit_animation(btn, on_finish=after_player_animation)
+            self.comp_result.config(text="Hit!")
+        else:
+            miss_animation(btn, on_finish=after_player_animation)
+            self.comp_result.config(text="Miss!")
+
+        btn.config(state="disabled")
+        
     def ai_move(self):
         difficulty = self.difficulty_var.get()
-        self.ai_state = ai_turn(self.player_board, self.ai_state, difficulty)
 
-        update_player_board(self.player_board, self.player_buttons)
-        self.refresh_ui()
+        self.ai_state, move, hit = ai_turn(
+            self.player_board, self.ai_state, difficulty
+        )
 
-        if all_ships_sunk(self.player_board):
-            self.end_game("💀 You lost!")
+        if move is None:
+            self.animating = False
+            return
+
+        r, c = move
+        btn = self.player_buttons[r][c]
+
+        def after_ai_animation():
+            self.refresh_ui()
+
+            if all_ships_sunk(self.player_board):
+                self.end_game("💀 You lost!")
+            else:
+                self.status.config(text="Your turn")
+                self.animating = False  # 🔓 unlock input
+
+        if hit:
+            hit_animation(btn, on_finish=after_ai_animation)
         else:
-            self.status.config(text="Your turn")
+            miss_animation(btn, on_finish=after_ai_animation)
+
+
 
     # ================= HELPERS =================
 
@@ -315,6 +342,7 @@ class BattleshipGUI:
         )
 
     def end_game(self, message):
+        self.animating = False
         self.status.config(text=message)
 
         for r in range(self.board_size):
