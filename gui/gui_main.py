@@ -441,58 +441,58 @@ class BattleshipGUI:
             width=14,
             command=self.show_difficulty_screen
         ).pack(pady=25)
-    # def show_difficulty_screen(self):
-    #     for widget in self.root.winfo_children():
-    #         widget.destroy()
+    def show_difficulty_screen(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
 
-    #     back_btn = tk.Button(
-    #         self.root,
-    #         text="← Back",
-    #         font=("Arial", 10),
-    #         width=7,
-    #         command=self.show_board_size_screen
-    #     )
-    #     back_btn.place(relx=0.98, rely=0.05, anchor="ne")
+        back_btn = tk.Button(
+            self.root,
+            text="← Back",
+            font=("Arial", 10),
+            width=7,
+            command=self.show_board_size_screen
+        )
+        back_btn.place(relx=0.98, rely=0.05, anchor="ne")
 
-    #     center = tk.Frame(self.root)
-    #     center.place(relx=0.5, rely=0.5, anchor="center")
+        center = tk.Frame(self.root)
+        center.place(relx=0.5, rely=0.5, anchor="center")
 
-    #     title = tk.Label(
-    #         center,
-    #         text="Select Difficulty",
-    #         font=("Arial", 22, "bold")
-    #     )
-    #     title.pack(pady=20)
+        title = tk.Label(
+            center,
+            text="Select Difficulty",
+            font=("Arial", 22, "bold")
+        )
+        title.pack(pady=20)
 
-    #     for level in ("Easy", "Medium", "Hard"):
-    #         tk.Radiobutton(
-    #             center,
-    #             text=level,
-    #             variable=self.difficulty_var,
-    #             value=level,
-    #             font=("Arial", 14),
-    #             indicatoron=0,
-    #             width=14,
-    #             pady=10
-    #         ).pack(pady=6)
+        for level in ("Easy", "Medium", "Hard"):
+            tk.Radiobutton(
+                center,
+                text=level,
+                variable=self.difficulty_var,
+                value=level,
+                font=("Arial", 14),
+                indicatoron=0,
+                width=14,
+                pady=10
+            ).pack(pady=6)
 
-    #     tk.Button(
-    #         center,
-    #         text="Start Game",
-    #         font=("Arial", 14),
-    #         width=16,
-    #         command=self.setup_game
-    #     ).pack(pady=25)
+        tk.Button(
+            center,
+            text="Start Game",
+            font=("Arial", 14),
+            width=16,
+            command=self.setup_game
+        ).pack(pady=25)
 
-    # def back_to_start(self):
-    #     # Optional: confirmation (recommended UX)
-    #     # If you don’t want a prompt, remove the next 4 lines.
-    #     from tkinter import messagebox
-    #     if not messagebox.askyesno(
-    #         "Exit Game",
-    #         "Return to start screen? Current game will be lost."
-    #     ):
-    #         return
+    def back_to_start(self):
+        # Optional: confirmation (recommended UX)
+        # If you don’t want a prompt, remove the next 4 lines.
+        from tkinter import messagebox
+        if not messagebox.askyesno(
+            "Exit Game",
+            "Return to start screen? Current game will be lost."
+        ):
+            return
 
-    #     # Go back to start screen (full reset)
-    #     self.show_start_screen()
+        # Go back to start screen (full reset)
+        self.show_start_screen()
