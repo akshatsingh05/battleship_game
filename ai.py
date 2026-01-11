@@ -20,7 +20,6 @@ def get_adjacent_cells(row, col, board_size):
         (row, col - 1),
         (row, col + 1),
     ]
-
     return [
         (r, c)
         for r, c in candidates
@@ -43,7 +42,7 @@ def ai_turn(player_board, ai_state, difficulty):
         ]
 
         if not available:
-            return ai_state
+            return ai_state, None, None
 
         r, c = random.choice(available)
         hit = attack(player_board, r, c)
@@ -64,8 +63,9 @@ def ai_turn(player_board, ai_state, difficulty):
                     if cell not in ai_state["targets"]:
                         ai_state["targets"].append(cell)
 
-            return ai_state
+            return ai_state, (r, c), hit
 
+        # No valid targets left → back to hunt
         ai_state["mode"] = "hunt"
 
     # ---------------- HUNT MODE (MEDIUM + HARD) ----------------
@@ -81,8 +81,8 @@ def ai_turn(player_board, ai_state, difficulty):
             ai_state["mode"] = "target"
             ai_state["targets"] = get_adjacent_cells(r, c, board_size)
 
-        return ai_state
+        return ai_state, (r, c), hit
 
-    # Safety reset
+    # ---------------- SAFETY RESET ----------------
     ai_state["hunt_cells"] = generate_hunt_cells(board_size)
-    return ai_state
+    return ai_state, None, None
