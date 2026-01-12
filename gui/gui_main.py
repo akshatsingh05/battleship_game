@@ -164,6 +164,39 @@ class BattleshipGUI:
 
     # ================= PLACEMENT =================
 
+    def on_player_place_click(self, row, col):
+        if not self.placement_phase:
+            return
+
+        self.clear_preview()
+        ship_size = self.ships_to_place[self.current_ship_index]
+
+        if not can_place_ship(
+            self.player_board, row, col, ship_size, self.current_orientation
+        ):
+            self.status.config(text="Invalid placement!")
+            return
+
+        if self.current_orientation == "H":
+            for i in range(ship_size):
+                self.player_board[row][col + i] = "S"
+        else:
+            for i in range(ship_size):
+                self.player_board[row + i][col] = "S"
+
+        self.current_ship_index += 1
+        self.refresh_ui()
+
+        if self.current_ship_index == len(self.ships_to_place):
+            self.status.config(
+                text="All ships placed. Click 'Finish Placement'."
+            )
+            self.finish_btn.config(state="normal")
+        else:
+            self.status.config(
+                text=f"Place ship of size {self.ships_to_place[self.current_ship_index]}"
+            )
+
     def finish_placement(self):
         if self.animating:
             return

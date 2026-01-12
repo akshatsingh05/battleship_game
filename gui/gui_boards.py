@@ -12,6 +12,7 @@ def create_computer_board(parent, click_handler, size):
                 board_frame,
                 width=4,
                 height=2,
+                font=("Arial", 14),
                 bg="blue",
                 command=lambda r=r, c=c: click_handler(r, c)
             )
@@ -33,6 +34,7 @@ def create_player_board(parent, size):
                 board_frame,
                 width=4,
                 height=2,
+                font=("Arial", 14),
                 bg="blue"
             )
             btn.grid(row=r, column=c, padx=1, pady=1)
