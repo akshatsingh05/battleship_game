@@ -82,8 +82,14 @@ class BattleshipGUI:
         self.setup_game()
 
     # ================= UI =================
-
     def build_ui(self):
+        # ================= ROOT LAYOUT =================
+        self.root.configure(padx=20, pady=10)
+
+        # ---------- TOP CONTROLS (VERTICAL, CENTERED) ----------
+        top_controls = tk.Frame(self.root)
+        top_controls.pack(side="top", pady=10)
+
         tk.Button(
             self.root,
             text="← Back to Start",
@@ -91,30 +97,38 @@ class BattleshipGUI:
             command=self.back_to_start
         ).place(relx=0.98, rely=0.03, anchor="ne")
 
-        tk.Label(self.root, text="Board Size", font=("Arial", 12)).pack(pady=4)
-        tk.OptionMenu(self.root, self.board_size_var, 5, 7, 10).pack()
 
-        tk.Label(self.root, text="Difficulty", font=("Arial", 12)).pack(pady=4)
+        tk.Label(top_controls, text="Board Size", font=("Arial", 12)).pack()
+        self.board_size_menu = tk.OptionMenu(
+            top_controls, self.board_size_var, 5, 7, 10
+        )
+        self.board_size_menu.pack(pady=2)
+
+        tk.Label(top_controls, text="Difficulty", font=("Arial", 12)).pack()
         tk.OptionMenu(
-            self.root,
+            top_controls,
             self.difficulty_var,
             "Easy", "Medium", "Hard"
-        ).pack()
+        ).pack(pady=2)
 
         self.orientation_btn = tk.Button(
-            self.root,
+            top_controls,
             text="Orientation: H",
             font=("Arial", 12),
             command=self.toggle_orientation
         )
-        self.orientation_btn.pack(pady=8)
+        self.orientation_btn.pack(pady=6)
 
-        container = tk.Frame(self.root)
-        container.pack(pady=15)
+        # ---------- BOARDS (CENTER, EXPANDABLE) ----------
+        boards_container = tk.Frame(self.root)
+        boards_container.pack(expand=True)
 
-        # --- COMPUTER BOARD ---
+        container = tk.Frame(boards_container)
+        container.pack()
+
+        # ---- COMPUTER BOARD ----
         comp = tk.Frame(container)
-        comp.grid(row=0, column=0, padx=30)
+        comp.grid(row=0, column=0, padx=40)
 
         tk.Label(comp, text="Computer Board", font=("Arial", 16)).pack()
         self.comp_counter = tk.Label(comp, text="", font=("Arial", 11))
@@ -129,9 +143,9 @@ class BattleshipGUI:
             for btn in row:
                 btn.config(state="disabled")
 
-        # --- PLAYER BOARD ---
+        # ---- PLAYER BOARD ----
         player = tk.Frame(container)
-        player.grid(row=0, column=1, padx=30)
+        player.grid(row=0, column=1, padx=40)
 
         tk.Label(player, text="Your Board", font=("Arial", 16)).pack()
         self.player_counter = tk.Label(player, text="", font=("Arial", 11))
@@ -144,30 +158,38 @@ class BattleshipGUI:
         for r in range(self.board_size):
             for c in range(self.board_size):
                 btn = self.player_buttons[r][c]
-                btn.config(command=lambda r=r, c=c: self.on_player_place_click(r, c))
+                btn.config(
+                    command=lambda r=r, c=c: self.on_player_place_click(r, c)
+                )
                 btn.bind("<Enter>", lambda e, r=r, c=c: self.show_preview(r, c))
                 btn.bind("<Leave>", lambda e: self.clear_preview())
 
+        # ---------- STATUS ----------
         self.status = tk.Label(self.root, text="", font=("Arial", 14))
-        self.status.pack(pady=10)
+        self.status.pack(pady=8)
+
+        # ---------- BOTTOM CONTROLS (ALWAYS VISIBLE) ----------
+        bottom_bar = tk.Frame(self.root)
+        bottom_bar.pack(side="bottom", pady=12)
 
         tk.Button(
-            self.root,
+            bottom_bar,
             text="Restart Game",
             font=("Arial", 12),
             width=18,
             command=self.restart_game
-        ).pack(pady=(5, 2))
+        ).pack(pady=(0, 6))
 
         self.finish_btn = tk.Button(
-            self.root,
+            bottom_bar,
             text="Finish Placement",
             font=("Arial", 12),
             width=18,
             state="disabled",
             command=self.finish_placement
         )
-        self.finish_btn.pack(pady=(2, 10))
+        self.finish_btn.pack()
+
 
     # ================= PLACEMENT PREVIEW =================
 
@@ -343,6 +365,12 @@ class BattleshipGUI:
     def show_board_size_screen(self):
         for w in self.root.winfo_children():
             w.destroy()
+        tk.Button(
+            self.root,
+            text="← Back",
+            font=("Arial", 12),
+            command=self.show_start_screen
+        ).place(relx=0.02, rely=0.05, anchor="nw")
 
         center = tk.Frame(self.root)
         center.place(relx=0.5, rely=0.5, anchor="center")
@@ -375,6 +403,13 @@ class BattleshipGUI:
     def show_difficulty_screen(self):
         for w in self.root.winfo_children():
             w.destroy()
+
+        tk.Button(
+            self.root,
+            text="← Back",
+            font=("Arial", 12),
+            command=self.show_board_size_screen
+        ).place(relx=0.02, rely=0.05, anchor="nw")
 
         center = tk.Frame(self.root)
         center.place(relx=0.5, rely=0.5, anchor="center")
