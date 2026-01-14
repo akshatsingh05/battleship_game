@@ -53,9 +53,10 @@ def create_player_board(parent, size):
         buttons.append(row)
     return buttons
 
+def update_player_board(player_board, player_buttons, sunk_cells=None, show_ships=True):
+    if sunk_cells is None:
+        sunk_cells = set()
 
-
-def update_player_board(player_board, player_buttons):
     size = len(player_board)
 
     for r in range(size):
@@ -63,11 +64,16 @@ def update_player_board(player_board, player_buttons):
             cell = player_board[r][c]
             btn = player_buttons[r][c]
 
-            if cell == "X":
-                btn.config(bg="red")      # Hit
+            if (r, c) in sunk_cells:
+                btn.config(bg="#8B0000")
+            elif cell == "X":
+                btn.config(bg="red")
             elif cell == "O":
-                btn.config(bg="green")    # Miss
+                btn.config(bg="green")
             elif cell == "S":
-                btn.config(bg="gray")     # Player ship visible
+                if show_ships:
+                    btn.config(bg="gray")
+                else:
+                    btn.config(bg="blue")
             else:
-                btn.config(bg="blue")     # Water
+                btn.config(bg="blue")

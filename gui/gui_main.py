@@ -286,16 +286,6 @@ class BattleshipGUI:
 
     def is_ship_sunk(self, ship, board):
         return all(board[r][c] == "X" for r, c in ship)
-    
-    def highlight_sunk_ship(self, ship, buttons):
-        for r, c in ship:
-            btn = buttons[r][c]
-            btn.config(
-                highlightbackground="black",
-                highlightthickness=2,
-                bd=2
-            )
-
 
     # ================= GAME FLOW =================
 
@@ -313,7 +303,6 @@ class BattleshipGUI:
             if idx not in self.sunk_computer_ships:
                 if self.is_ship_sunk(ship, self.computer_board):
                     self.sunk_computer_ships.add(idx)
-                    self.highlight_sunk_ship(ship, self.computer_buttons)
 
         def after_player():
             self.refresh_ui()
@@ -345,7 +334,6 @@ class BattleshipGUI:
                 if idx not in self.sunk_player_ships:
                     if self.is_ship_sunk(ship, self.player_board):
                         self.sunk_player_ships.add(idx)
-                        self.highlight_sunk_ship(ship, self.player_buttons)
 
             if all_ships_sunk(self.player_board):
                 self.end_game("💀 You lost!")
@@ -359,7 +347,31 @@ class BattleshipGUI:
     # ================= HELPERS =================
 
     def refresh_ui(self):
-        update_player_board(self.player_board, self.player_buttons)
+        # ---- PLAYER BOARD ----
+        player_sunk_cells = set()
+        for idx in self.sunk_player_ships:
+            player_sunk_cells.update(self.player_ships[idx])
+
+        update_player_board(
+            self.player_board,
+            self.player_buttons,
+            player_sunk_cells,
+            show_ships=True
+        )
+
+        # ---- COMPUTER BOARD ----
+        computer_sunk_cells = set()
+        for idx in self.sunk_computer_ships:
+            computer_sunk_cells.update(self.computer_ships[idx])
+
+        update_player_board(
+            self.computer_board,
+            self.computer_buttons,
+            computer_sunk_cells,
+            show_ships=False
+        )
+
+        # ---- COUNTERS ----
         update_counters(
             self.player_board,
             self.computer_board,

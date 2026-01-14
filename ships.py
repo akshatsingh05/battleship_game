@@ -19,7 +19,7 @@ def can_place_ship(board, row, col, ship_size, orientation):
     return True
 
 
-def place_ship(board, ship_size, ships_list):
+def place_ship(board, ship_size):
     size = len(board)
 
     while True:
@@ -28,15 +28,25 @@ def place_ship(board, ship_size, ships_list):
         col = random.randint(0, size - 1)
 
         if can_place_ship(board, row, col, ship_size, orientation):
+            ship_cells = []
+
             if orientation == "H":
                 for i in range(ship_size):
                     board[row][col + i] = "S"
+                    ship_cells.append((row, col + i))
             else:
                 for i in range(ship_size):
                     board[row + i][col] = "S"
-            return
+                    ship_cells.append((row + i, col))
 
+            return ship_cells
 
-def place_all_ships(board, ship_sizes, ships_list):
+def place_all_ships(board, ship_sizes, ships_list=None):
+    if ships_list is None:
+        ships_list = []
+
     for ship_size in ship_sizes:
-        place_ship(board, ship_size, ships_list)
+        ship_cells = place_ship(board, ship_size)
+        ships_list.append(ship_cells)
+
+    return ships_list
