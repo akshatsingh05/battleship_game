@@ -54,9 +54,15 @@ class BattleshipGUI:
         self.player_board = create_board(self.board_size)
         self.computer_board = create_board(self.board_size)
 
+        self.player_ships = []
+        self.computer_ships = []
+        self.sunk_player_ships = set()
+        self.sunk_computer_ships = set()
+
         place_all_ships(
             self.computer_board,
-            self.ship_configs[self.board_size]
+            self.ship_configs[self.board_size],
+            self.computer_ships
         )
 
         self.ships_to_place = self.ship_configs[self.board_size]
@@ -239,12 +245,18 @@ class BattleshipGUI:
             self.status.config(text="Invalid placement!")
             return
 
+        cells = []
+
         if self.current_orientation == "H":
             for i in range(ship_size):
                 self.player_board[row][col + i] = "S"
+                cells.append((row, col + i))
         else:
             for i in range(ship_size):
                 self.player_board[row + i][col] = "S"
+                cells.append((row + i, col))
+
+        self.player_ships.append(cells)
 
         self.current_ship_index += 1
         self.refresh_ui()
@@ -272,6 +284,19 @@ class BattleshipGUI:
 
         self.status.config(text="Your turn!")
 
+    def is_ship_sunk(self, ship, board):
+        return all(board[r][c] == "X" for r, c in ship)
+    
+    def highlight_sunk_ship(self, ship, buttons):
+        for r, c in ship:
+            btn = buttons[r][c]
+            btn.config(
+                highlightbackground="black",
+                highlightthickness=2,
+                bd=2
+            )
+
+
     # ================= GAME FLOW =================
 
     def on_computer_click(self, row, col):
@@ -283,6 +308,12 @@ class BattleshipGUI:
         self.animating = True
         hit = attack(self.computer_board, row, col)
         btn = self.computer_buttons[row][col]
+
+        for idx, ship in enumerate(self.computer_ships):
+            if idx not in self.sunk_computer_ships:
+                if self.is_ship_sunk(ship, self.computer_board):
+                    self.sunk_computer_ships.add(idx)
+                    self.highlight_sunk_ship(ship, self.computer_buttons)
 
         def after_player():
             self.refresh_ui()
@@ -309,11 +340,19 @@ class BattleshipGUI:
 
         def after_ai():
             self.refresh_ui()
+
+            for idx, ship in enumerate(self.player_ships):
+                if idx not in self.sunk_player_ships:
+                    if self.is_ship_sunk(ship, self.player_board):
+                        self.sunk_player_ships.add(idx)
+                        self.highlight_sunk_ship(ship, self.player_buttons)
+
             if all_ships_sunk(self.player_board):
                 self.end_game("💀 You lost!")
-            else:
-                self.status.config(text="Your turn!")
-                self.animating = False
+                return
+
+            self.status.config(text="Your turn!")
+            self.animating = False
 
         (hit_animation if hit else miss_animation)(btn, on_finish=after_ai)
 

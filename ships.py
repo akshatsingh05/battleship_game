@@ -19,7 +19,7 @@ def can_place_ship(board, row, col, ship_size, orientation):
     return True
 
 
-def place_ship(board, ship_size):
+def place_ship(board, ship_size, ships_list):
     size = len(board)
 
     while True:
@@ -37,6 +37,6 @@ def place_ship(board, ship_size):
             return
 
 
-def place_all_ships(board, ship_sizes):
+def place_all_ships(board, ship_sizes, ships_list):
     for ship_size in ship_sizes:
-        place_ship(board, ship_size)
+        place_ship(board, ship_size, ships_list)
