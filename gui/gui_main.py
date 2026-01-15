@@ -103,6 +103,13 @@ class BattleshipGUI:
             command=self.back_to_start
         ).place(relx=0.98, rely=0.03, anchor="ne")
 
+        tk.Button(
+            self.root,
+            text="❓Info",
+            font=("Arial", 12),
+            width=5,
+            command=self.show_legend_popup
+        ).place(relx=0.98, rely=0.08, anchor="ne")
 
         tk.Label(top_controls, text="Board Size", font=("Arial", 12)).pack()
         self.board_size_menu = tk.OptionMenu(
@@ -389,6 +396,72 @@ class BattleshipGUI:
     def toggle_orientation(self):
         self.current_orientation = "V" if self.current_orientation == "H" else "H"
         self.orientation_btn.config(text=f"Orientation: {self.current_orientation}")
+
+    def show_legend_popup(self):
+        popup = tk.Toplevel(self.root)
+        popup.title("Color Legend")
+        popup.resizable(False, False)
+        popup.transient(self.root)
+        popup.grab_set()
+
+        # Center the popup
+        popup.update_idletasks()
+        w, h = 360, 280
+        x = (popup.winfo_screenwidth() // 2) - (w // 2)
+        y = (popup.winfo_screenheight() // 2) - (h // 2)
+        popup.geometry(f"{w}x{h}+{x}+{y}")
+
+        container = tk.Frame(popup, padx=20, pady=15)
+        container.pack(fill="both", expand=True)
+
+        # ---- TITLE ----
+        tk.Label(
+            container,
+            text="🎨 Color Legend",
+            font=("Arial", 18, "bold")
+        ).pack(pady=(0, 15))
+
+        # ---- LEGEND TABLE ----
+        table = tk.Frame(container)
+        table.pack()
+
+        legend_items = [
+            ("blue", "Water"),
+            ("green", "Miss"),
+            ("red", "Hit"),
+            ("#8B0000", "Sunk Ship"),
+            ("gray", "Your Ship"),
+        ]
+
+        for color, text in legend_items:
+            row = tk.Frame(table)
+            row.pack(anchor="w", pady=4)
+
+            color_box = tk.Label(
+                row,
+                bg=color,
+                width=3,
+                height=1,
+                relief="solid",
+                bd=1
+            )
+            color_box.pack(side="left", padx=(0, 10))
+
+            tk.Label(
+                row,
+                text=text,
+                font=("Arial", 12)
+            ).pack(side="left")
+
+        # ---- CLOSE BUTTON ----
+        tk.Button(
+            container,
+            text="Got it",
+            font=("Arial", 12),
+            width=12,
+            command=popup.destroy
+        ).pack(pady=(20, 0))
+
 
     # ================= START SCREENS =================
 
