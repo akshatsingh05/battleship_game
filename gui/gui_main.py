@@ -20,6 +20,9 @@ class BattleshipGUI:
     # ================= INITIALIZATION =================
 
     def __init__(self):
+        self.legend_shown_once = False
+        self.legend_overlay = None
+        self.legend_visible = False
         self.root = tk.Tk()
         self.root.title("Battleship")
         self.root.state("zoomed")
@@ -82,9 +85,14 @@ class BattleshipGUI:
         self.status.config(
             text=f"Place ship of size {self.ships_to_place[0]}"
         )
+        # ---- AUTO SHOW LEGEND ONCE ----
+        if not self.legend_shown_once:
+            self.root.after(400, self.show_legend_popup)
+            self.legend_shown_once = True
 
     def restart_game(self):
         self.animating = False
+        self.legend_shown_once = False
         self.setup_game()
 
     # ================= UI =================
@@ -276,6 +284,9 @@ class BattleshipGUI:
                 text=f"Place ship of size {self.ships_to_place[self.current_ship_index]}"
             )
 
+        if self.legend_visible:
+            return
+
     def finish_placement(self):
         self.placement_phase = False
         self.orientation_btn.config(state="disabled")
@@ -317,6 +328,9 @@ class BattleshipGUI:
                 self.end_game("🎉 You win!")
             else:
                 self.ai_move()
+
+        if self.legend_visible:
+            return
 
         (hit_animation if hit else miss_animation)(btn, on_finish=after_player)
         self.comp_result.config(text="Hit!" if hit else "Miss!")
@@ -398,32 +412,47 @@ class BattleshipGUI:
         self.orientation_btn.config(text=f"Orientation: {self.current_orientation}")
 
     def show_legend_popup(self):
-        popup = tk.Toplevel(self.root)
-        popup.title("Color Legend")
-        popup.resizable(False, False)
-        popup.transient(self.root)
-        popup.grab_set()
+        if self.legend_visible:
+            return
 
-        # Center the popup
-        popup.update_idletasks()
-        w, h = 360, 280
-        x = (popup.winfo_screenwidth() // 2) - (w // 2)
-        y = (popup.winfo_screenheight() // 2) - (h // 2)
-        popup.geometry(f"{w}x{h}+{x}+{y}")
+        self.legend_visible = True
+        self.root.update_idletasks()
 
-        container = tk.Frame(popup, padx=20, pady=15)
-        container.pack(fill="both", expand=True)
+        # ---------- CLICK-CATCH OVERLAY ----------
+        overlay = tk.Toplevel(self.root)
+        self.legend_overlay = overlay
 
-        # ---- TITLE ----
+        overlay.overrideredirect(True)
+        overlay.attributes("-alpha", 0.01)
+        overlay.attributes("-topmost", True)
+
+        overlay.geometry(
+            f"{self.root.winfo_width()}x{self.root.winfo_height()}+"
+            f"{self.root.winfo_rootx()}+{self.root.winfo_rooty()}"
+        )
+
+        overlay.bind("<Button-1>", lambda e: self.close_legend())
+
+        # ---------- LEGEND CARD ----------
+        card_win = tk.Toplevel(self.root)
+        self.legend_card = card_win
+
+        card_win.overrideredirect(True)
+        card_win.attributes("-topmost", True)
+
+        x = self.root.winfo_rootx() + int(self.root.winfo_width() * 0.7)
+        y = self.root.winfo_rooty() + 100
+        card_win.geometry(f"260x260+{x}+{y}")
+
+        card = tk.Frame(card_win, bg="white", bd=2, relief="solid")
+        card.pack(fill="both", expand=True)
+
         tk.Label(
-            container,
+            card,
             text="🎨 Color Legend",
-            font=("Arial", 18, "bold")
-        ).pack(pady=(0, 15))
-
-        # ---- LEGEND TABLE ----
-        table = tk.Frame(container)
-        table.pack()
+            font=("Arial", 16, "bold"),
+            bg="white"
+        ).pack(pady=(12, 10))
 
         legend_items = [
             ("blue", "Water"),
@@ -434,33 +463,39 @@ class BattleshipGUI:
         ]
 
         for color, text in legend_items:
-            row = tk.Frame(table)
-            row.pack(anchor="w", pady=4)
+            row = tk.Frame(card, bg="white")
+            row.pack(anchor="w", padx=8, pady=4)
 
-            color_box = tk.Label(
-                row,
-                bg=color,
-                width=3,
-                height=1,
-                relief="solid",
-                bd=1
-            )
-            color_box.pack(side="left", padx=(0, 10))
+            tk.Label(row, bg=color, width=3, height=1, bd=1, relief="solid")\
+                .pack(side="left", padx=(0, 10))
 
-            tk.Label(
-                row,
-                text=text,
-                font=("Arial", 12)
-            ).pack(side="left")
+            tk.Label(row, text=text, font=("Arial", 12), bg="white")\
+                .pack(side="left")
 
-        # ---- CLOSE BUTTON ----
         tk.Button(
-            container,
+            card,
             text="Got it",
-            font=("Arial", 12),
-            width=12,
-            command=popup.destroy
-        ).pack(pady=(20, 0))
+            width=10,
+            command=self.close_legend
+        ).pack(pady=(12, 14))
+
+
+    def hide_legend(self):
+        if self.legend_overlay:
+            self.legend_overlay.destroy()
+            self.legend_overlay = None
+        self.legend_visible = False
+
+    def close_legend(self):
+        if self.legend_overlay:
+            self.legend_overlay.destroy()
+            self.legend_overlay = None
+
+        if hasattr(self, "legend_card"):
+            self.legend_card.destroy()
+            del self.legend_card
+
+        self.legend_visible = False
 
 
     # ================= START SCREENS =================
