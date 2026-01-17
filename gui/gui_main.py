@@ -606,3 +606,6 @@ class BattleshipGUI:
             return
         self.animating = False
         self.show_start_screen()
+
+if __name__ == "__main__":
+    BattleshipGUI()
